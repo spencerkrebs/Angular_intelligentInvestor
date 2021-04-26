@@ -1,0 +1,29 @@
+body {
+    padding: 50px;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    background-color: rgb(48, 48, 48);
+  }
+  
+  a {
+    color: #00B7FF;
+  }
+  
+  #green{
+    background-color: rgb(133, 255, 133);
+  }
+  
+  #red{
+    background-color: rgb(255, 102, 102);
+  }
+
+  #redFont {
+      color: rgb(255, 56, 56);
+  }
+
+  #greenFont {
+    color: rgb(94, 255, 73);
+}
+
+.table td,th{
+    text-align: center;   
+ }

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>The Intelligent Investor</title>
+</head>
+
+<body>
+  <h1 style="color: white">The Intelligent Investor</h1>
+  <form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <input formControlName="ticker" type="text" class="form-control">
+    </div>
+    <button class="btn btn-primary" type="submit">Search</button>
+  </form>
+
+  <section *ngIf="r?.results.length > 0">
+    <h3 style="color: white; text-align: center">Price: {{r?.results[0].price}}</h3>
+    <h3 style="color: white; text-align: center">Annual Earnings</h3>
+    <table class="table table-dark table-sm">
+      <thead>
+        <tr>
+          <th scope="col">Year</th>
+          <th scope="col">Earnings ($)</th>
+          <th scope="col">EPS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let year of r?.results[0].yearlyEarnings">
+          <th scope="row">{{year.date}}</th>
+          <td *ngIf="year.earnings.indexOf('-') !== -1" id="redFont">{{year.earnings}}</td>
+          <td *ngIf="year.earnings.indexOf('-') == -1" id="greenFont">+{{year.earnings}}</td>
+          <td *ngIf="year.eps.indexOf('-') !== -1" id="redFont">{{year.eps}}</td>
+          <td *ngIf="year.eps.indexOf('-') == -1" id="greenFont">{{year.eps}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 style="color: white; text-align: center">Quarterly Earnings</h3>
+    <table class="table table-dark table-sm">
+      <thead>
+        <tr>
+          <th scope="col">Quarter</th>
+          <th scope="col">Earnings ($)</th>
+          <th scope="col">EPS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let quarter of r?.results[0].quarterlyEarnings">
+          <th scope="row">{{quarter.date}}</th>
+          <td *ngIf="quarter.earnings.indexOf('-') !== -1" id="redFont">{{quarter.earnings}}</td>
+          <td *ngIf="quarter.earnings.indexOf('-') == -1" id="greenFont">+{{quarter.earnings}}</td>
+          <td *ngIf="quarter.eps < 0" id="redFont">{{quarter.eps}}</td>
+          <td *ngIf="quarter.eps > 0" id="greenFont">+{{quarter.eps}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+
+    <div class="card text-center">
+      <div *ngIf="r?.results[0].largeCompany" class="card-header" id='green'>
+        <h4> Market Capitalization </h4>
+        <p> {{r.results[0].ticker}} has an adquate market cap of ${{r.results[0].marketCapitalization}}</p>
+      </div>
+      <div *ngIf="!r?.results[0].largeCompany" class="card-header" id='red'>
+        <h3> Market Capitalization </h3>
+        <p> {{r.results[0].ticker}} is not considered a large company with a market cap of
+          ${{r.results[0].marketCapitalization}}</p>
+      </div>
+      <div class="card-body .bg-gradient-primary">
+        <h5 class="card-title">Does the company have a market cap greater than $10 billion?</h5>
+        <p class="card-text">According to Graham, each company should be large, prominent, and conservatively financed.
+          Large companies have the capital and power to carry them through adversity, and the market will respond with
+          reasonable speed to a large company doing well. Today, a company with a market cap of at least $10 billion
+          is considered large. </p>
+      </div>
+    </div>
+
+    <div class="card text-center">
+      <div *ngIf="(r?.results[0].averagePE < 25)&&(r?.results[0].averagePE > 0)" class="card-header" id='green'>
+        <h4> Multiyear Price/Earnings Ratio </h4>
+        <p> {{r.results[0].ticker}} has a reasonable P/E ratio of ${{r.results[0].averagePE}}</p>
+      </div>
+      <div *ngIf="r?.results[0].averagePE > 25" class="card-header" id='red'>
+        <h3> Multiyear Price/Earnings Ratio </h3>
+        <p> {{r.results[0].ticker}} has a high P/E ratio of ${{r.results[0].averagePE}}</p>
+      </div>
+      <div *ngIf="r?.results[0].averagePE < 0" class="card-header" id='red'>
+        <h3> Multiyear Price/Earnings Ratio </h3>
+        <p> {{r.results[0].ticker}} has a negative P/E ratio of ${{r.results[0].averagePE}}. This means the company is
+          losing money.</p>
+      </div>
+      <div class="card-body .bg-gradient-primary">
+        <h5 class="card-title">Does the company have a low average price/earnings multiplier? </h5>
+        <p class="card-text">The price/earnings ratio should be calculated based on the multiyear average
+          of past earnings, as calculated here. The P/E ratio is often misleading in financial reports and can cause an
+          investor
+          to overestimate value. The Intelligent Investor does not value a company based on earnings it hasn't generated
+          yet.
+          "Next year's earnings projections" are not applicable to our analysis. A company's average price/earnings
+          multiplier should be greater than 0, but no greater than 25. </p>
+      </div>
+
+    </div>
+
+    <h3 style="color: white; text-align: center">Number of Outstanding Shares</h3>
+    <table class="table table-dark table-sm">
+      <thead>
+        <tr>
+          <th scope="col">Year</th>
+          <th scope="col">Outstanding Shares</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let year of r?.results[0].yearlyEarnings">
+          <th scope="row">{{year.date}}</th>
+          <td scope="row" style="color: aqua">{{year.outstandingShares}}</td>
+          <td *ngIf="year.checkBuybacks == true" id="redFont">BUYBACK</td>
+          <td *ngIf="year.checkBuybacks == null" id="greenFont">-</td>
+          <td *ngIf="year.checkBuybacks == false" id="greenFont">New Shares Issued</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="card text-center">
+      <div *ngIf="r?.results[0].buyBackCount <= 3" class="card-header" id='green'>
+        <h3> Number of Outstanding Shares </h3>
+        <p> {{r.results[0].ticker}} does not appear to buy back their shares often.</p>
+      </div>
+      <div *ngIf="r?.results[0].buyBackCount > 3" class="card-header" id='red'>
+        <h3> Number of Outstanding Shares </h3>
+        <p> {{r.results[0].ticker}} appears to buy back their shares often.</p>
+      </div>
+      <div class="card-body .bg-gradient-primary">
+        <h5 class="card-title">Beware of Buybacks. </h5>
+        <p class="card-text">Have outstanding shares of the company increased, decreased, or remained the same over
+          time? If a company decreases their number of outstanding shares, they are participating in buybacks.
+          Companies often buy back their shares in order to increase Earnings Per Share (EPS) because it simply makes
+          their stock look better. EPS is (Net Income)/(Number of Outstanding Shares). There are therefore two ways to
+          increase EPS - increase income or decrease the number of outstanding shares. When a company buys back their shares, 
+          they are using cash to buy their shares at the specified stock price. So who cares? Well, it means they're probably not allocating cash effectively. 
+          A company can spend cash on four things: buying other companies, research & development, capital expenditures (like building an additional factory or paying employees higher wages), or return money to shareholders. A company can return money to shareholders through
+          dividends or stock buybacks. Buybacks tend to benefit executives because rising stock prices make their stock options more valuable. 
+        </p>
+          <h5 class="card-title">The Intelligent Investor on buybacks:</h5>
+          <p>"Companies should buy back their shares when they are cheap -
+          not when they are at or near record highs. Unfortunately,
+          it recently has become all too common for companies to repurchase their stock when it is overpriced. There is
+          no more cynical waste of a company's cash -
+          since the real purpose of that maneuver is to enable top executives to reap multimillion-dollar paydays by
+          selling their own stock options
+          in the name of 'enhancing shareholder value.' A substantial amount of anecdotal evidence, in fact, suggests
+          that managers who talk about 'enhancing shareholder value' seldom do.
+          In investing, as with life in general, ultimate victory usually goes to the doers, not the talkers."</p>
+      </div>
+    </div>
+
+  </section>
+
+</body>
+
+</html>
